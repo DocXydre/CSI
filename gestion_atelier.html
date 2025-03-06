@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ateliers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .side-box {
+            width: 14.28%; /* 1/7 de l'écran */
+            height: 100vh;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+        }
+        .left-box {
+            left: 0;
+        }
+        .right-box {
+            right: 0;
+        }
+        .main-content {
+            margin: 0 auto;
+            width: 70%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .atelier {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .atelier h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .atelier .details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .atelier .details div {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        @media (min-width: 600px) {
+            .atelier .details {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .atelier .details div {
+                width: 48%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="side-box left-box">
+        <div class="profil">
+            <img src="profil.jpg" alt="Photo de profil">
+            <h3>Nom Prénom</h3>
+            <h4>admin</h4>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="atelier">
+            <h2>Découverte du potager</h2>
+            <div class="details">
+                <div>
+                    <strong>Description :</strong> Introduction au jardinage, semis et techniques naturelles.
+                </div>
+                <div>
+                    <strong>Conditions :</strong> Accessible à tous, prévoir des vêtements adaptés.
+                </div>
+            </div>
+        </div>
+        <div class="atelier">
+            <h2>Fabrication de fromage</h2>
+            <div class="details">
+                <div>
+                    <strong>Description :</strong> Transformation du lait, utilisation des ferments.
+                </div>
+                <div>
+                    <strong>Conditions :</strong> Atelier en intérieur, tenue propre requise.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="side-box right-box">Droite</div>
+</body>
+</html>
