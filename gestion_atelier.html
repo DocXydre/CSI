@@ -60,6 +60,16 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
+        .profil {
+            margin-top: 20px;
+        }
+        .profil img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
         @media (min-width: 600px) {
             .atelier .details {
                 flex-direction: row;
@@ -74,9 +84,19 @@
 <body>
     <div class="side-box left-box">
         <div class="profil">
-            <img src="profil.jpg" alt="Photo de profil">
-            <h3>Nom Prénom</h3>
+            <img src="profil.jpeg" class="profil" alt="Photo de profil">
+            <h3>MATHIS Thomas</h3>
             <h4>admin</h4>
+        </div>
+        <div>
+            <h3>Menu</h3>
+            <ul>
+                <li><a href="#">Tableau de bord</a></li>
+                <li><a href="#">Stock</a></li>
+                <li><a href="#">Woofer</a></li>
+                <li><a href="#">Ateliers</a></li>
+                <li><a href="#">Ventes</a></li>
+            </ul>
         </div>
     </div>
     <div class="main-content">
@@ -103,6 +123,20 @@
             </div>
         </div>
     </div>
-    <div class="side-box right-box">Droite</div>
+    <div class="side-box right-box">
+        <div class="notif" >
+            <h3>Notifications</h3>
+            <div class="notif-liste">
+                <div class="notif-item">
+                    <src src="profil.jpeg" class="profil" alt="Photo de profil">
+                    <p>Mathis Thomas a ajouté un nouvel atelier</p>
+                    
+
+        </div>
+
+        <div class="enLigne">
+            <h3>Woofer en ligne</h3>
+            <p>Mathis Thomas</p>
+    </div>
 </body>
 </html>
