@@ -17,12 +17,13 @@
             overflow: hidden;
         }
         .side-box {
-            width: 14.28%; /* 1/7 de l'écran */
+            width: 15%;
             height: 100vh;
-            background: #ddd;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            align-items: flex-start;
+            border: 1px solid #ddd;
+            padding: 20px;
             position: fixed;
         }
         .left-box {
@@ -62,11 +63,11 @@
         }
 
         .profil {
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .profil img {
-            width: 100px;
-            height: 100px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             margin-bottom: 10px;
         }
@@ -78,6 +79,55 @@
             .atelier .details div {
                 width: 48%;
             }
+        }
+
+        .menu-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        .menu-item img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .menu-item a {
+            text-decoration: none;
+            color: black;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .menu-item:hover {
+            background: #ccc;
+        }
+        .menu-item.selected {
+            background: #ccc;
+        }
+        .notif {
+            margin-top: 20px;
+        }
+        .notif h3 {
+            margin-bottom: 10px;
+        }
+        .notif-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .notif-item img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .notif-item.important {
+            background: #ffcccc;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -91,11 +141,31 @@
         <div>
             <h3>Menu</h3>
             <ul>
-                <li><a href="#">Tableau de bord</a></li>
-                <li><a href="#">Stock</a></li>
-                <li><a href="#">Woofer</a></li>
-                <li><a href="#">Ateliers</a></li>
-                <li><a href="#">Ventes</a></li>
+                <li class="menu-item">
+                    <a href="#">
+                        <img src="dashboard-icon.png" alt="Tableau de bord"> Tableau de bord
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#">
+                        <img src="stock-icon.png" alt="Stock"> Stock
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#">
+                        <img src="woofer-icon.png" alt="Woofer"> Woofer
+                    </a>
+                </li>
+                <li class="menu-item selected">
+                    <a href="#">
+                        <img src="atelier-icon.png" alt="Ateliers"> Ateliers
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#">
+                        <img src="sales-icon.png" alt="Ventes"> Ventes
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -124,17 +194,21 @@
         </div>
     </div>
     <div class="side-box right-box">
-        <div class="notif" >
+        <div class="notif">
             <h3>Notifications</h3>
-            <div class="notif-liste">
-                <div class="notif-item">
-                    <img src src="profil.jpeg" class="profil" alt="Photo de profil">
-                    <p>Mathis Thomas a ajouté un nouvel atelier</p>
+            <div class="notif-item">
+                <img src="profil.jpeg" class="profil" alt="Photo de profil">
+                <p>Mathis Thomas a ajouté un nouvel atelier</p>
+            </div>
+            <div class="notif-item important">
+                <img src="profil.jpeg" class="profil" alt="Photo de profil">
+                <p>Remplir stock</p>
+            </div>
         </div>
-
         <div class="enLigne">
             <h3>Woofer en ligne</h3>
             <p>Mathis Thomas</p>
+        </div>
     </div>
 </body>
 </html>
