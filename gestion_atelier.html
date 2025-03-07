@@ -71,6 +71,7 @@
             border-radius: 50%;
             margin-bottom: 10px;
         }
+
         @media (min-width: 600px) {
             .atelier .details {
                 flex-direction: row;
@@ -109,25 +110,58 @@
         }
         .notif {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .notif h3 {
             margin-bottom: 10px;
+            font-size: 18px;
         }
         .notif-item {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
         }
+
+        .notif h5 {
+        color: gray;
+        font-size: 12px;
+        }   
+
+        .notif p {
+            font-size: 16px;
+        }
+
         .notif-item img {
             width: 30px;
             height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
         }
         .notif-item.important {
             background: #ffcccc;
-            padding: 10px;
-            border-radius: 5px;
+        }
+
+
+        .sur-place {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sur-place h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .sur-place p {
+            font-size: 16px;
+        }
+
+        .sur-place img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -197,20 +231,26 @@
         <div class="notif">
             <h3>Notifications</h3>
              <div class="notif-item important">
-                <img src="profil.jpeg" class="profil" alt="Photo de profil">
+                <img src="alerte-icon.png" alt="Alerte">
                 <p>Remplir stock</p>
-                <p>Maintenant</p>
+                <h5>Maintenant</h5>
             </div>
             <div class="notif-item">
-                <img src="profil.jpeg" class="profil" alt="Photo de profil">
-                <p>Mathis Thomas a ajouté un nouvel atelier</p>
-                <p>Il y a 12 minutes</p>
+                <img src="woofer-icon.png" alt="Woofer">
+                <p>Nouveau Woofer Quentin</p>
+                <h5>Il y a 12 minutes</h5>
             </div>
         </div>
-        <div class="enLigne">
+        <div class="sur-place">
             <h3>Woofer en ligne</h3>
-            <p>Mathis Thomas</p>
+            <div class="woofer-item">
+                <img src="profil.jpeg" class="profil" alt="Photo de profil">
+                <p>Thomas</p>
+                <h5>Activité Poules</h5>
+            </div>
         </div>
     </div>
 </body>
 </html>
+
+
