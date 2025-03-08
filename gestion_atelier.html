@@ -4,166 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ateliers</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .side-box {
-            width: 15%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            border: 1px solid #ddd;
-            padding: 20px;
-            position: fixed;
-        }
-        .left-box {
-            left: 0;
-        }
-        .right-box {
-            right: 0;
-        }
-        .main-content {
-            margin: 0 auto;
-            width: 70%;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .atelier {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 10px 0;
-            background: #f9f9f9;
-        }
-        .atelier h2 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .atelier .details {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .atelier .details div {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
 
-        .profil {
-            margin-bottom: 20px;
-        }
-        .profil img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-        }
-
-        @media (min-width: 600px) {
-            .atelier .details {
-                flex-direction: row;
-                justify-content: space-between;
-            }
-            .atelier .details div {
-                width: 48%;
-            }
-        }
-
-        .menu-item {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            transition: background 0.3s;
-        }
-        .menu-item img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-        .menu-item a {
-            text-decoration: none;
-            color: black;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        .menu-item:hover {
-            background: #ccc;
-        }
-        .menu-item.selected {
-            background: #ccc;
-        }
-        .notif {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .notif h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        .notif-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .notif h5 {
-        color: gray;
-        font-size: 12px;
-        }   
-
-        .notif p {
-            font-size: 16px;
-        }
-
-        .notif-item img {
-            width: 30px;
-            height: 30px;
-        }
-        .notif-item.important {
-            background: #ffcccc;
-        }
-
-
-        .sur-place {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .sur-place h3 {
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        .sur-place p {
-            font-size: 16px;
-        }
-
-        .sur-place img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="side-box left-box">
@@ -203,35 +45,57 @@
             </ul>
         </div>
     </div>
-    <div class="main-content">
-        <div class="atelier">
-            <h2>Découverte du potager</h2>
-            <div class="details">
-                <div>
-                    <strong>Description :</strong> Introduction au jardinage, semis et techniques naturelles.
-                </div>
-                <div>
-                    <strong>Conditions :</strong> Accessible à tous, prévoir des vêtements adaptés.
-                </div>
+    <div class="container">
+        <div class="section">
+            <div class="title">Découverte du potager</div>
+            <p><strong>ID :</strong> 007</p>
+            <p><strong>Date :</strong> 09/12/2024 10h (1h)</p>
+            <p><strong>Woofer :</strong> Sylvain Castagnos (05)</p>
+        </div>
+        <div class="section">
+            <p class="badge">Atelier plein (10/10)</p>
+            <p class="status">Statut : Confirmé</p>
+            <p><strong>Prix :</strong> 11€</p>
+            <p><strong>Gain total :</strong> 110€</p>
+            <p><strong>Lieu(x) :</strong> Ferme, Potager, Serre</p>
+        </div>
+        <div class="section">
+            <div class="title">Gestion de l’atelier</div>
+            <div class="button-container">
+                <button class="button schedule">Reprogrammer</button>
+                <button class="button cancel">Annuler</button>
             </div>
         </div>
-        <div class="atelier">
-            <h2>Fabrication de fromage</h2>
-            <div class="details">
-                <div>
-                    <strong>Description :</strong> Transformation du lait, utilisation des ferments.
-                </div>
-                <div>
-                    <strong>Conditions :</strong> Atelier en intérieur, tenue propre requise.
-                </div>
-            </div>
+        <div class="section">
+            <div class="title">Programme :</div>
+            <ul>
+                <li>Introduction au monde du potager</li>
+                <li>Comprendre le sol et les plantes</li>
+                <li>Les gestes essentiels du jardinier</li>
+                <li>Semer et planter en pratique</li>
+                <li>Techniques de jardinage au naturel</li>
+            </ul>
+        </div>
+        <div class="section">
+            <div class="title">Matériel utilisé :</div>
+            <ul>
+                <li>Pelles</li>
+                <li>Arrosoirs</li>
+                <li>Gants de jardinage</li>
+                <li>Semences et plants</li>
+                <li>Affiches explicatives</li>
+            </ul>
+        </div>
+        <div class="section">
+            <div class="title">Liste des inscrits :</div>
+            <p>Sam Raimi, Rosé Josina, Stark Dog, Samir Nasri, Manuel Valls, Hugo Décrypte, Thomas Moinier, Laurent Frottier, Gaëtan Buzzcut, Yamen Kachler</p>
         </div>
     </div>
     <div class="side-box right-box">
         <div class="notif">
             <h3>Notifications</h3>
-             <div class="notif-item important">
-                <img src="alerte-icon.png" alt="Alerte">
+             <div class="notif-item" style="background-color: #FF000060;">
+                <img src="alerte-icon.png" alt="Alerte" >
                 <p>Remplir stock</p>
                 <h5>Maintenant</h5>
             </div>
