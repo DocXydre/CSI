@@ -47,49 +47,21 @@
     </div>
     <div class="container">
         <div class="section">
-            <div class="title">Découverte du potager</div>
-            <p><strong>ID :</strong> 007</p>
-            <p><strong>Date :</strong> 09/12/2024 10h (1h)</p>
-            <p><strong>Woofer :</strong> Sylvain Castagnos (05)</p>
+            <div class="title">Ajouter un Atelier</div>
+            <form action="ajout_atelier.php" method="POST">
+                <label for="nom">Nom de l'atelier :</label>
+                <input type="text" id="nom" name="nom" required>
+        
+                <label for="date">Date :</label>
+                <input type="datetime-local" id="date" name="date" required>
+        
+                <label for="prix">Prix (€) :</label>
+                <input type="number" id="prix" name="prix" required>
+        
+                <button type="submit">Ajouter</button>
+            </form>
         </div>
-        <div class="section">
-            <p class="badge">Atelier plein (10/10)</p>
-            <p class="status">Statut : Confirmé</p>
-            <p><strong>Prix :</strong> 11€</p>
-            <p><strong>Gain total :</strong> 110€</p>
-            <p><strong>Lieu(x) :</strong> Ferme, Potager, Serre</p>
-        </div>
-        <div class="section">
-            <div class="title">Gestion de l’atelier</div>
-            <div class="button-container">
-                <button class="button schedule">Reprogrammer</button>
-                <button class="button cancel">Annuler</button>
-            </div>
-        </div>
-        <div class="section">
-            <div class="title">Programme :</div>
-            <ul>
-                <li>Introduction au monde du potager</li>
-                <li>Comprendre le sol et les plantes</li>
-                <li>Les gestes essentiels du jardinier</li>
-                <li>Semer et planter en pratique</li>
-                <li>Techniques de jardinage au naturel</li>
-            </ul>
-        </div>
-        <div class="section">
-            <div class="title">Matériel utilisé :</div>
-            <ul>
-                <li>Pelles</li>
-                <li>Arrosoirs</li>
-                <li>Gants de jardinage</li>
-                <li>Semences et plants</li>
-                <li>Affiches explicatives</li>
-            </ul>
-        </div>
-        <div class="section">
-            <div class="title">Liste des inscrits :</div>
-            <p>Sam Raimi, Rosé Josina, Stark Dog, Samir Nasri, Manuel Valls, Hugo Décrypte, Thomas Moinier, Laurent Frottier, Gaëtan Buzzcut, Yamen Kachler</p>
-        </div>
+        
     </div>
     <div class="side-box right-box">
         <div class="notif">
