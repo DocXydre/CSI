@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr"></html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,17 +45,14 @@
         .box-connexion button:hover {
             background-color: #0056b3;
         }
-        .box-connexion input {
-            width: calc(100% - 22px);
-        }
     </style>
 </head>
 <body>
     <div class="box-connexion">
         <h2>Connexion</h2>
-        <form>
-            <input type="text" placeholder="Identifiant" required>
-            <input type="password" placeholder="Mot de passe" required>
+        <form action="connexion.php" method="POST">
+            <input type="text" name="identifiant" placeholder="Identifiant" required>
+            <input type="password" name="motdepasse" placeholder="Mot de passe" required>
             <button type="submit">Valider</button>
         </form>
     </div>
