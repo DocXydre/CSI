@@ -1,3 +1,19 @@
+<?php
+$host = 'localhost';
+$dbname = 'FERME';
+$username = 'root';
+$password = '';
+
+$conn = new mysqli($host, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Erreur de connexion : " . $conn->connect_error);
+}
+
+// Récupérer les ateliers
+$query = "SELECT * FROM Atelier";
+$result = $conn->query($query);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -88,5 +104,3 @@
     </div>
 </body>
 </html>
-
-

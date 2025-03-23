@@ -1,25 +1,37 @@
 <?php
-require 'config.php';
+$host = 'localhost';
+$dbname = 'FERME';
+$user = 'root';
+$pass = 'root';
+
+// Connexion à la base de données avec mysqli
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+if ($conn->connect_error) {
+    die("Erreur de connexion à la base de données : " . $conn->connect_error);
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST["nom"];
-    $date = $_POST["date"];
-    $prix = $_POST["prix"];
+    $nom = $_POST['nom'];
+    $date = $_POST['date'];
+    $prix = $_POST['prix'];
+    $dateAtelier = date('Y-m-d', strtotime($date));
+    $heureDebut = date('H:i:s', strtotime($date));
+    $heureFin = date('H:i:s', strtotime($date . ' + 2 hours')); // Exemple : durée de 2 heures
 
-    // Préparer la requête SQL
-    $sql = "INSERT INTO ateliers (nom, date, prix) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO Atelier (nomAtelier, description, dateAtelier, heureDebut, heureFin, prixAtelier, statutAtelier, participantsMax, mailWoofer, categorieProduit) VALUES (?, ?, ?, ?, ?, ?, 'EnPréparation', 5, 'alanwautot_54@icloud.com', 'Fromages')";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssd", $nom, $date, $prix); // "ssd" = string, string, double (float)
+    $stmt->bind_param("sssssds", $nom, $nom, $dateAtelier, $heureDebut, $heureFin, $prix);
 
-    // Exécuter la requête
     if ($stmt->execute()) {
-        echo "Atelier ajouté avec succès.";
+        header("Location: gestion_atelier.php");
+        exit();
     } else {
-        echo "Erreur lors de l'ajout : " . $stmt->error;
+        echo "Erreur lors de l'ajout de l'atelier : " . $stmt->error;
     }
 
-    // Fermer la connexion
     $stmt->close();
-    $conn->close();
 }
+
+$conn->close();
 ?>
