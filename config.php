@@ -1,8 +1,8 @@
 <?php
-$host = "localhost"; // ou l'adresse de ton serveur SQL
-$dbname = "nom_de_ta_base"; // Mets le bon nom
-$username = "root"; // Ton utilisateur
-$password = ""; // Ton mot de passe
+$host = "localhost"; 
+$dbname = "FERME"; 
+$username = "root";
+$password = "root"; 
 
 // Connexion avec MySQLi
 $conn = new mysqli($host, $username, $password, $dbname);
