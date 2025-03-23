@@ -21,10 +21,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 $utilisateur = $result->fetch_assoc();
 
-// Récupérer les ateliers de la base de données
-$sql = "SELECT * FROM Atelier";
+// Récupérer les stocks de la base de données
+$sql = "SELECT s.*, p.nomProduit FROM StockProduit s JOIN Produit p ON s.produitStocke = p.IDProduit";
 $result = $conn->query($sql);
-$ateliers = $result->fetch_all(MYSQLI_ASSOC);
+$stocks = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -32,8 +32,18 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ateliers</title>
+    <title>Stock</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .stock-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .stock-item.out-of-stock {
+            background-color: #ffcccc;
+        }
+    </style>
 </head>
 <body>
     <div class="side-box left-box">
@@ -51,7 +61,7 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                         <span>Tableau de bord</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item selected">
                     <a href="gestion_stock.html">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>
@@ -61,7 +71,7 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                         <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
                     </a>
                 </li>
-                <li class="menu-item selected">
+                <li class="menu-item">
                     <a href="gestion_atelier.html">
                         <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
                     </a>
@@ -74,35 +84,31 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
             </ul>
         </div>
     </div>
+
     <div class="container">
         <div class="section">
-            <div class="title">Ajouter un Atelier</div>
-            <form action="ajout_atelier.php" method="POST">
-                <label for="nom">Nom de l'atelier :</label>
-                <input type="text" id="nom" name="nom" required>
-
-                <label for="date">Date :</label>
-                <input type="datetime-local" id="date" name="date" required>
-
-                <label for="prix">Prix (€) :</label>
-                <input type="number" id="prix" name="prix" required>
-
-                <button type="submit">Ajouter</button>
-            </form>
-        </div>
-
-        <div class="section">
-            <div class="title">Liste des Ateliers</div>
-            <?php foreach ($ateliers as $atelier): ?>
-                <div class="atelier-item">
-                    <h3><?php echo $atelier['nomAtelier']; ?></h3>
-                    <p>Date : <?php echo $atelier['dateAtelier']; ?></p>
-                    <p>Prix : <?php echo $atelier['prixAtelier']; ?> €</p>
-                    <button onclick="openModal(<?php echo $atelier['IDAtelier']; ?>)">Gérer</button>
+            <div class="title">Gestion des Stocks</div>
+            <?php foreach ($stocks as $stock): ?>
+                <div class="stock-item <?php echo $stock['quantiteDisponible'] == 0 ? 'out-of-stock' : ''; ?>">
+                    <h3><?php echo $stock['nomProduit']; ?></h3>
+                    <p>Quantité actuelle : <?php echo $stock['quantiteDisponible']; ?></p>
+                    <p>Dernier ajout : <?php echo $stock['quantiteEntree']; ?> unités le <?php echo $stock['historiqueStock']; ?> par <?php echo $stock['mailUtilisateur']; ?></p>
+                    <p>Dernière sortie : <?php echo $stock['quantiteSortie']; ?> unités le <?php echo $stock['historiqueStock']; ?> par <?php echo $stock['mailUtilisateur']; ?></p>
+                    <form action="ajouter_stock.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="stockId" value="<?php echo $stock['IDStock']; ?>">
+                        <input type="number" name="quantite" placeholder="Quantité à ajouter" required>
+                        <button type="submit">Ajouter</button>
+                    </form>
+                    <form action="supprimer_stock.php" method="POST" style="display:inline;">
+                        <input type="hidden" name="stockId" value="<?php echo $stock['IDStock']; ?>">
+                        <input type="number" name="quantite" placeholder="Quantité à supprimer" required>
+                        <button type="submit">Supprimer</button>
+                    </form>
                 </div>
             <?php endforeach; ?>
         </div>
     </div>
+
     <div class="side-box right-box">
         <div class="notif">
             <h3>Notifications</h3>
@@ -126,45 +132,5 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
             </div>
         </div>
     </div>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-
-    <script>
-        function openModal(atelierId) {
-            document.getElementById('modal-body').innerHTML = `
-                <h3>Gérer l'atelier</h3>
-                <form action="reprogrammer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <label for="newDate">Nouvelle date :</label>
-                    <input type="datetime-local" id="newDate" name="newDate" required>
-                    <button type="submit">Reprogrammer</button>
-                </form>
-                <form action="gerer_participants.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Gérer les participants</button>
-                </form>
-                <form action="supprimer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Supprimer</button>
-                </form>
-            `;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        document.getElementsByClassName('close')[0].onclick = function() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('modal')) {
-                document.getElementById('modal').style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>

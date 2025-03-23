@@ -21,10 +21,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 $utilisateur = $result->fetch_assoc();
 
-// Récupérer les ateliers de la base de données
-$sql = "SELECT * FROM Atelier";
+// Récupérer les transactions de la base de données
+$sql = "SELECT v.*, u.prenomUtilisateur, u.nomUtilisateur FROM Vente v JOIN Utilisateur u ON v.mailUtilisateur = u.mailUtilisateur";
 $result = $conn->query($sql);
-$ateliers = $result->fetch_all(MYSQLI_ASSOC);
+$transactions = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -32,8 +32,18 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ateliers</title>
+    <title>Ventes</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .transaction-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .details {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="side-box left-box">
@@ -61,12 +71,12 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                         <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
                     </a>
                 </li>
-                <li class="menu-item selected">
+                <li class="menu-item">
                     <a href="gestion_atelier.html">
                         <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item selected">
                     <a href="ventes.html">
                         <img src="src/icon/sales-icon.png" alt="Ventes"> <span>Ventes</span>
                     </a>
@@ -74,35 +84,58 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
             </ul>
         </div>
     </div>
+
     <div class="container">
         <div class="section">
-            <div class="title">Ajouter un Atelier</div>
-            <form action="ajout_atelier.php" method="POST">
-                <label for="nom">Nom de l'atelier :</label>
-                <input type="text" id="nom" name="nom" required>
+            <div class="title">Ajouter une Vente</div>
+            <form action="ajout_vente.php" method="POST">
+                <label for="dateVente">Date de la vente :</label>
+                <input type="date" id="dateVente" name="dateVente" required>
 
-                <label for="date">Date :</label>
-                <input type="datetime-local" id="date" name="date" required>
-
-                <label for="prix">Prix (€) :</label>
-                <input type="number" id="prix" name="prix" required>
+                <label for="mailVendeur">Vendeur :</label>
+                <select id="mailVendeur" name="mailVendeur" required>
+                    <?php
+                    $sql = "SELECT mailUtilisateur, prenomUtilisateur, nomUtilisateur FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
+                    $result = $conn->query($sql);
+                    $vendeurs = $result->fetch_all(MYSQLI_ASSOC);
+                    foreach ($vendeurs as $vendeur):
+                    ?>
+                        <option value="<?php echo $vendeur['mailUtilisateur']; ?>">
+                            <?php echo $vendeur['prenomUtilisateur'] . ' ' . $vendeur['nomUtilisateur']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
                 <button type="submit">Ajouter</button>
             </form>
         </div>
 
         <div class="section">
-            <div class="title">Liste des Ateliers</div>
-            <?php foreach ($ateliers as $atelier): ?>
-                <div class="atelier-item">
-                    <h3><?php echo $atelier['nomAtelier']; ?></h3>
-                    <p>Date : <?php echo $atelier['dateAtelier']; ?></p>
-                    <p>Prix : <?php echo $atelier['prixAtelier']; ?> €</p>
-                    <button onclick="openModal(<?php echo $atelier['IDAtelier']; ?>)">Gérer</button>
+            <div class="title">Liste des Transactions</div>
+            <?php foreach ($transactions as $transaction): ?>
+                <div class="transaction-item">
+                    <h3>Vente du <?php echo $transaction['dateVente']; ?></h3>
+                    <p>Vendeur : <?php echo $transaction['prenomUtilisateur'] . ' ' . $transaction['nomUtilisateur']; ?></p>
+                    <p>Prix total : <?php echo $transaction['prixTotal']; ?> €</p>
+                    <button onclick="toggleDetails(<?php echo $transaction['IDVente']; ?>)">Plus</button>
+                    <div class="details" id="details-<?php echo $transaction['IDVente']; ?>">
+                        <?php
+                        $sql = "SELECT d.*, p.nomProduit, p.prixUnit FROM DetailsVente d JOIN Produit p ON d.IDStock = p.IDProduit WHERE d.IDVente = ?";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("i", $transaction['IDVente']);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $details = $result->fetch_all(MYSQLI_ASSOC);
+                        foreach ($details as $detail):
+                        ?>
+                            <p><?php echo $detail['nomProduit']; ?> - <?php echo $detail['quantiteVendue']; ?> unités - <?php echo $detail['prixUnit']; ?> €</p>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
     </div>
+
     <div class="side-box right-box">
         <div class="notif">
             <h3>Notifications</h3>
@@ -127,42 +160,13 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body"></div>
-        </div>
-    </div>
-
     <script>
-        function openModal(atelierId) {
-            document.getElementById('modal-body').innerHTML = `
-                <h3>Gérer l'atelier</h3>
-                <form action="reprogrammer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <label for="newDate">Nouvelle date :</label>
-                    <input type="datetime-local" id="newDate" name="newDate" required>
-                    <button type="submit">Reprogrammer</button>
-                </form>
-                <form action="gerer_participants.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Gérer les participants</button>
-                </form>
-                <form action="supprimer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Supprimer</button>
-                </form>
-            `;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        document.getElementsByClassName('close')[0].onclick = function() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('modal')) {
-                document.getElementById('modal').style.display = 'none';
+        function toggleDetails(venteId) {
+            var details = document.getElementById('details-' + venteId);
+            if (details.style.display === 'none' || details.style.display === '') {
+                details.style.display = 'block';
+            } else {
+                details.style.display = 'none';
             }
         }
     </script>
