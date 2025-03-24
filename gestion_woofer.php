@@ -2,7 +2,50 @@
 session_start();
 include 'config.php';
 
-// Récupérer les woofers de la base de données
+$message = "";
+
+// Traitement de l'ajout
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ajout_woofer'])) {
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $dateNaissance = $_POST['dateNaissance'];
+    $dateArrivee = $_POST['dateArrivee'];
+    $dateDepart = $_POST['dateDepart'];
+    $motdepasse = $_POST['motdepasse'];
+
+    $mail = strtolower($prenom . $nom . '@example.com');
+
+    $sql = "INSERT INTO Utilisateur (mailUtilisateur, dateNaissance, prenomUtilisateur, nomUtilisateur, roleUtilisateur, mdpUtilisateur, dateArrivee, dateDepart) 
+            VALUES (?, ?, ?, ?, 'Woofer', ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssss", $mail, $dateNaissance, $prenom, $nom, $motdepasse, $dateArrivee, $dateDepart);
+
+    if ($stmt->execute()) {
+        $message = "✅ Woofer ajouté avec succès !";
+    } else {
+        $message = "❌ Erreur lors de l'ajout : " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+// Traitement de la suppression
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['supprimer_woofer'])) {
+    $mail = $_POST['mailWoofer'];
+
+    $stmt = $conn->prepare("DELETE FROM Utilisateur WHERE mailUtilisateur = ? AND roleUtilisateur = 'Woofer'");
+    $stmt->bind_param("s", $mail);
+
+    if ($stmt->execute()) {
+        $message = "✅ Woofer supprimé avec succès.";
+    } else {
+        $message = "❌ Erreur lors de la suppression : " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+// Récupérer les woofers
 $sql = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
 $result = $conn->query($sql);
 $woofers = $result->fetch_all(MYSQLI_ASSOC);
@@ -12,14 +55,74 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Woofers</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .woofer-item {
             border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .woofer-item h3 {
+            margin-top: 0;
+        }
+
+        .taches {
+            margin-top: 10px;
+            background-color: #fff;
+            border-left: 4px solid #007BFF;
             padding: 10px;
-            margin-bottom: 10px;
+            border-radius: 6px;
+        }
+
+        .taches h4 {
+            margin-top: 0;
+        }
+
+        .action-buttons {
+            margin-top: 10px;
+        }
+
+        .action-buttons form {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .action-buttons button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-buttons .delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .action-buttons .edit {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .message {
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -33,32 +136,11 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
         <div>
             <h3>Menu</h3>
             <ul>
-                <li class="menu-item">
-                    <a href="dashboard.html">
-                        <img src="src/icon/dashboard-icon.png" alt="Tableau de bord">
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="gestion_stock.php">
-                        <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
-                    </a>
-                </li>
-                <li class="menu-item selected">
-                    <a href="gestion_woofer.php">
-                        <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="gestion_atelier.php">
-                        <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="vente.php">
-                        <img src="src/icon/sales-icon.png" alt="Ventes"> <span>Ventes</span>
-                    </a>
-                </li>
+                <li class="menu-item"><a href="dashboard.html"><img src="src/icon/dashboard-icon.png" alt="Dashboard"><span>Tableau de bord</span></a></li>
+                <li class="menu-item"><a href="gestion_stock.php"><img src="src/icon/stock-icon.png" alt="Stock"><span>Stock</span></a></li>
+                <li class="menu-item selected"><a href="gestion_woofer.php"><img src="src/icon/woofer-icon.png" alt="Woofer"><span>Woofer</span></a></li>
+                <li class="menu-item"><a href="gestion_atelier.php"><img src="src/icon/atelier-icon.png" alt="Ateliers"><span>Ateliers</span></a></li>
+                <li class="menu-item"><a href="vente.php"><img src="src/icon/sales-icon.png" alt="Ventes"><span>Ventes</span></a></li>
             </ul>
         </div>
     </div>
@@ -66,7 +148,16 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
     <div class="container">
         <div class="section">
             <div class="title">Ajouter un Woofer</div>
-            <form action="ajout_woofer.php" method="POST">
+
+            <?php if ($message): ?>
+                <div class="message <?php echo strpos($message, '✅') !== false ? 'success' : 'error'; ?>">
+                    <?php echo $message; ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="gestion_woofer.php" method="POST">
+                <input type="hidden" name="ajout_woofer" value="1">
+
                 <label for="nom">Nom :</label>
                 <input type="text" id="nom" name="nom" required>
 
@@ -94,13 +185,23 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
             <?php foreach ($woofers as $woofer): ?>
                 <div class="woofer-item">
                     <h3><?php echo $woofer['prenomUtilisateur'] . ' ' . $woofer['nomUtilisateur']; ?></h3>
-                    <p>Âge : <?php echo date_diff(date_create($woofer['dateNaissance']), date_create('today'))->y; ?></p>
+                    <p>Âge : <?php echo date_diff(date_create($woofer['dateNaissance']), date_create('today'))->y; ?> ans</p>
                     <p>Date d'arrivée : <?php echo $woofer['dateArrivee']; ?></p>
                     <p>Date de départ : <?php echo $woofer['dateDepart']; ?></p>
-                    <form action="modifier_woofer.php" method="POST" style="display:inline;">
-                        <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
-                        <button type="submit">Modifier</button>
-                    </form>
+
+                    <div class="action-buttons">
+                        <form action="modifier_woofer.php" method="POST">
+                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
+                            <button type="submit" class="edit">Modifier</button>
+                        </form>
+
+                        <form action="gestion_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
+                            <input type="hidden" name="supprimer_woofer" value="1">
+                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
+                            <button type="submit" class="delete">Supprimer</button>
+                        </form>
+                    </div>
+
                     <div class="taches">
                         <h4>Tâches assignées :</h4>
                         <?php
