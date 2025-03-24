@@ -1,25 +1,6 @@
 <?php
 session_start();
-$host = 'localhost';
-$dbname = 'FERME';
-$user = 'root';
-$pass = 'root';
-
-// Connexion à la base de données avec mysqli
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
-
-// Récupérer les informations de l'utilisateur connecté
-$mailUtilisateur = $_SESSION['mailUtilisateur'];
-$sql = "SELECT * FROM Utilisateur WHERE mailUtilisateur = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $mailUtilisateur);
-$stmt->execute();
-$result = $stmt->get_result();
-$utilisateur = $result->fetch_assoc();
+include 'config.php';
 
 // Récupérer les transactions de la base de données
 $sql = "SELECT v.*, u.prenomUtilisateur, u.nomUtilisateur FROM Vente v JOIN Utilisateur u ON v.mailUtilisateur = u.mailUtilisateur";
@@ -47,10 +28,10 @@ $transactions = $result->fetch_all(MYSQLI_ASSOC);
 </head>
 <body>
     <div class="side-box left-box">
-        <div class="profil">
+    <div class="profil">
             <img src="src/profil.jpeg" class="profil" alt="Photo de profil">
-            <h3><?php echo $utilisateur['prenomUtilisateur'] . ' ' . $utilisateur['nomUtilisateur']; ?></h3>
-            <h4><?php echo $utilisateur['roleUtilisateur']; ?></h4>
+            <h3><?php echo $_SESSION['user']['nom'] . ' ' . $_SESSION['user']['prenom']; ?></h3>
+            <h4><?php echo $_SESSION['user']['role']; ?></h4>
         </div>
         <div>
             <h3>Menu</h3>
@@ -62,22 +43,22 @@ $transactions = $result->fetch_all(MYSQLI_ASSOC);
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_stock.html">
+                    <a href="gestion_stock.php">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_woofer.html">
+                    <a href="gestion_woofer.php">
                         <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_atelier.html">
+                    <a href="gestion_atelier.php">
                         <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
                     </a>
                 </li>
                 <li class="menu-item selected">
-                    <a href="ventes.html">
+                    <a href="vente.php">
                         <img src="src/icon/sales-icon.png" alt="Ventes"> <span>Ventes</span>
                     </a>
                 </li>
