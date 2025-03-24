@@ -15,6 +15,18 @@ $role = $_SESSION['user']['role'];
 $sql = "SELECT * FROM Atelier";
 $result = $conn->query($sql);
 $ateliers = $result->fetch_all(MYSQLI_ASSOC);
+
+// Calculer le nombre de participants et les places disponibles pour chaque atelier
+foreach ($ateliers as &$atelier) {
+    $sqlParticipants = "SELECT COUNT(*) as nombreParticipants FROM Participation WHERE IDAtelier = ?";
+    $stmtParticipants = $conn->prepare($sqlParticipants);
+    $stmtParticipants->bind_param("i", $atelier['IDAtelier']);
+    $stmtParticipants->execute();
+    $resultParticipants = $stmtParticipants->get_result();
+    $rowParticipants = $resultParticipants->fetch_assoc();
+    $atelier['nombreParticipants'] = $rowParticipants['nombreParticipants'];
+    $atelier['placesDisponibles'] = $atelier['participantsMax'] - $atelier['nombreParticipants'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,6 +36,42 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ateliers</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .atelier-item {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .atelier-item h3 {
+            margin-top: 0;
+        }
+        .atelier-item p {
+            margin: 5px 0;
+        }
+        .atelier-item button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .atelier-item button:hover {
+            background-color: #0056b3;
+        }
+        .atelier-item .reprogrammer {
+            background-color: #FFC107;
+        }
+        .atelier-item .gerer {
+            background-color: #28a745;
+        }
+        .atelier-item .annuler {
+            background-color: #DC3545;
+        }
+    </style>
 </head>
 <body>
     <div class="side-box left-box">
@@ -42,22 +90,22 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_stock.php">
+                    <a href="gestion_stock.html">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_woofer.php">
+                    <a href="gestion_woofer.html">
                         <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
                     </a>
                 </li>
                 <li class="menu-item selected">
-                    <a href="gestion_atelier.php">
+                    <a href="gestion_atelier.html">
                         <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="vente.php">
+                    <a href="ventes.html">
                         <img src="src/icon/sales-icon.png" alt="Ventes"> <span>Ventes</span>
                     </a>
                 </li>
@@ -82,7 +130,7 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 
                 <label for="description">Description :</label>
                 <textarea id="description" name="description" rows="4" required></textarea>
-                
+
                 <label for="responsable">Responsable :</label>
                 <select id="responsable" name="responsable" required>
                     <?php
@@ -92,6 +140,7 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                         echo "<option value='" . $row['mailUtilisateur'] . "'>" . $row['prenomUtilisateur'] . " " . $row['nomUtilisateur'] . "</option>";
                     }
                     ?>
+                </select>
 
                 <button type="submit">Ajouter</button>
             </form>
@@ -104,22 +153,34 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                     <h3><?php echo $atelier['nomAtelier']; ?></h3>
                     <p>Date : <?php echo $atelier['dateAtelier']; ?></p>
                     <p>Prix : <?php echo $atelier['prixAtelier']; ?> €</p>
-                    // afficher le nombre de participant sur le nombre de place disponnible
                     <p>Places disponibles : <?php echo $atelier['placesDisponibles']; ?></p>
                     <p>Nombre de participants : <?php echo $atelier['nombreParticipants']; ?></p>
-                    <p>Participants : 
+                    <p>Participants :
                         <?php
-                        $sqlParticipants = "SELECT prenom FROM Participants WHERE IDAtelier = " . $atelier['IDAtelier'];
-                        $resultParticipants = $conn->query($sqlParticipants);
-                        $participants = $resultParticipants->fetch_all(MYSQLI_ASSOC);
-                        foreach ($participants as $participant) {
-                            echo $participant['prenom'] . ' ';
+                        $sqlParticipantsList = "SELECT prenomParticipant FROM Participant p JOIN Participation pa ON p.mailParticipant = pa.mailParticipant WHERE pa.IDAtelier = ?";
+                        $stmtParticipantsList = $conn->prepare($sqlParticipantsList);
+                        $stmtParticipantsList->bind_param("i", $atelier['IDAtelier']);
+                        $stmtParticipantsList->execute();
+                        $resultParticipantsList = $stmtParticipantsList->get_result();
+                        $participantsList = $resultParticipantsList->fetch_all(MYSQLI_ASSOC);
+                        foreach ($participantsList as $participant) {
+                            echo $participant['prenomParticipant'] . ' ';
                         }
                         ?>
                     </p>
                     <p>Statut : <?php echo $atelier['statutAtelier']; ?></p>
-                    <p>Responsable : <?php echo $atelier['nomUtilisateur']; ?></p>
-                    <button onclick="openModal(<?php echo $atelier['IDAtelier']; ?>)">Gérer</button>
+                    <p>Responsable :
+                        <?php
+                        $sqlResponsable = "SELECT prenomUtilisateur, nomUtilisateur FROM Utilisateur WHERE mailUtilisateur = '" . $atelier['mailWoofer'] . "'";
+                        $resultResponsable = $conn->query($sqlResponsable);
+                        $responsable = $resultResponsable->fetch_assoc();
+                        echo $responsable['prenomUtilisateur'] . ' ' . $responsable['nomUtilisateur'];
+                        ?>
+                    </p>
+                    <button class="reprogrammer" onclick="openModal(<?php echo $atelier['IDAtelier']; ?>, 'reprogrammer')">Reprogrammer</button>
+                    <button class="gerer" onclick="openModal(<?php echo $atelier['IDAtelier']; ?>, 'gerer')">Gérer les participants</button>
+                    <button class="modifier" onclick="openModal(<?php echo $atelier['IDAtelier']; ?>, 'modifier')">Modifier le responsable</button>
+                    <button class="annuler" onclick="openModal(<?php echo $atelier['IDAtelier']; ?>, 'annuler')">Annuler</button>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -156,24 +217,40 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <script>
-        function openModal(atelierId) {
-            document.getElementById('modal-body').innerHTML = `
-                <h3>Gérer l'atelier</h3>
-                <form action="reprogrammer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <label for="newDate">Nouvelle date :</label>
-                    <input type="datetime-local" id="newDate" name="newDate" required>
-                    <button type="submit">Reprogrammer</button>
-                </form>
-                <form action="gerer_participants.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Gérer les participants</button>
-                </form>
-                <form action="supprimer_atelier.php" method="POST">
-                    <input type="hidden" name="atelierId" value="${atelierId}">
-                    <button type="submit">Supprimer</button>
-                </form>
-            `;
+        function openModal(atelierId, action) {
+            let content = '';
+            if (action === 'reprogrammer') {
+                content = `
+                    <h3>Reprogrammer l'atelier</h3>
+                    <form action="reprogrammer_atelier.php" method="POST">
+                        <input type="hidden" name="atelierId" value="${atelierId}">
+                        <label for="newDate">Nouvelle date :</label>
+                        <input type="datetime-local" id="newDate" name="newDate" required>
+                        <button type="submit">Reprogrammer</button>
+                    </form>
+                `;
+            } else if (action === 'gerer') {
+                content = `
+                    <h3>Gérer les participants</h3>
+                    <form action="gerer_participants.php" method="POST">
+                        <input type="hidden" name="atelierId" value="${atelierId}">
+                        <label for="participants">Ajouter un participant :</label>
+                        <input type="text" id="participants" name="participants" placeholder="Email du participant" required>
+                        // ajouter le nom et prénom
+                        
+                        <button type="submit">Ajouter</button>
+                    </form>
+                `;
+            } else if (action === 'annuler') {
+                content = `
+                    <h3>Annuler l'atelier</h3>
+                    <form action="supprimer_atelier.php" method="POST">
+                        <input type="hidden" name="atelierId" value="${atelierId}">
+                        <button type="submit">Annuler</button>
+                    </form>
+                `;
+            }
+            document.getElementById('modal-body').innerHTML = content;
             document.getElementById('modal').style.display = 'block';
         }
 
