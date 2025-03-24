@@ -191,9 +191,13 @@ BEFORE INSERT ON DetailsVente
 FOR EACH ROW
 BEGIN
   DECLARE qteDispo INT;
+  DECLARE mailVendeur VARCHAR(100);
 
-  SELECT quantiteDisponible INTO qteDispo
-  FROM StockProduit WHERE IDStock = NEW.IDStock;
+  SELECT quantiteDisponible, mailUtilisateur INTO qteDispo, mailVendeur
+  FROM StockProduit INNER JOIN DetailsVente
+  ON StockProduit.IDStock = DetailsVente.IDStock INNER JOIN Vente
+  ON DetailsVente.IDVente = Vente.IDVente
+  WHERE IDStock = NEW.IDStock AND Vente.IDVente = NEW.IDVente;
 
   IF NEW.quantiteVendue > qteDispo THEN
     SIGNAL SQLSTATE '45000'
@@ -204,10 +208,10 @@ BEGIN
   UPDATE StockProduit
   SET quantiteSortie = quantiteSortie + NEW.quantiteVendue,
       quantiteDisponible = quantiteDisponible - NEW.quantiteVendue,
-      historiqueStock = NOW()
+      historiqueStock = NOW(),
+      mailUtilisateur = mailVendeur
   WHERE IDStock = NEW.IDStock;
 END;
-
 
 -- Trigger qui s'active avant la création d'une tâche pour vérifier si la date
 -- de la tâche se passe avant la date de départ du woofer
@@ -393,9 +397,12 @@ VALUES (3, 4, 2);
 SELECT * FROM DetailsVente;
 
 
+INSERT INTO Utilisateur VALUES ('admin', NULL, NULL, NULL, 'Administrateur', 'admin', NULL, NULL);
 
-
-
+SELECT * FROM Utilisateur;
+UPDATE Utilisateur
+SET mdpUtilisateur = 'admin'
+WHERE mailUtilisateur = 'admin';
 
 -- Trigger pour le prixTotal correct
 -- Trigger pour le nb max de participants correct (rajouter fontionnalité qui change le statut à 'Plein')
@@ -403,3 +410,4 @@ SELECT * FROM DetailsVente;
 -- Tous les triggers pour les dates
 -- Trigger pour mettre à jour les stocks après une vente correct
 -- Ajouter un trigger pour la date de péremption
+-- Ajouter modification de l'utilisateur dans stock avec celui qui fait la vente
