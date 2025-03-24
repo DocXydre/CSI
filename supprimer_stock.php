@@ -1,26 +1,33 @@
 <?php
-$host = 'localhost';
-$dbname = 'FERME';
-$user = 'root';
-$pass = 'root';
-
-// Connexion à la base de données avec mysqli
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
+session_start();
+include 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stockId = $_POST['stockId'];
     $quantite = $_POST['quantite'];
 
-    $sql = "UPDATE StockProduit SET quantiteDisponible = quantiteDisponible - ?, quantiteSortie = quantiteSortie + ?, historiqueStock = NOW() WHERE IDStock = ?";
+    $mailUtilisateur = $_SESSION['user']['mailUtilisateur'];
+    $dateSuppression = date("Y-m-d H:i:s");
+
+    // Mise à jour du stock
+    $sql = "UPDATE StockProduit 
+            SET quantiteDisponible = GREATEST(quantiteDisponible - ?, 0), 
+                quantiteSortie = ?, 
+                historiqueStock = ?, 
+                mailUtilisateur = ? 
+            WHERE IDStock = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iis", $quantite, $quantite, $stockId);
+    $stmt->bind_param("isssi", $quantite, $quantite, $dateSuppression, $mailUtilisateur, $stockId);
 
     if ($stmt->execute()) {
-        header("Location: gestion_stock.php");
+        // Récupérer le nom du produit
+        $result = $conn->query("SELECT nomProduit FROM Produit p JOIN StockProduit s ON s.produitStocke = p.IDProduit WHERE s.IDStock = '$stockId'");
+        $row = $result->fetch_assoc();
+        $nomProduit = urlencode($row['nomProduit']);
+        $date = urlencode($dateSuppression);
+        $mail = urlencode($mailUtilisateur);
+
+        header("Location: gestion_stock.php?suppression=$quantite&produit=$nomProduit&date=$date&mail=$mail");
         exit();
     } else {
         echo "Erreur lors de la suppression du stock : " . $stmt->error;
@@ -30,4 +37,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
-?>

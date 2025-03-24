@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user'] = [
             'nom' => $utilisateur['nomUtilisateur'],
             'prenom' => $utilisateur['prenomUtilisateur'],
-            'role' => $utilisateur['roleUtilisateur']
+            'role' => $utilisateur['roleUtilisateur'],
+            'mailUtilisateur' => $utilisateur['mailUtilisateur']
         ];
 
         header("Location: gestion_atelier.php");

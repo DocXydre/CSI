@@ -34,13 +34,6 @@ $stocks = $result->fetch_all(MYSQLI_ASSOC);
             <h4><?php echo $_SESSION['user']['role']; ?></h4>
         </div>
 
-        <!-- ✅ MESSAGE D'AJOUT -->
-        <?php if (isset($_GET['ajout']) && isset($_GET['produit'])): ?>
-            <div class="confirmation-message">
-                ✅ <?php echo htmlspecialchars($_GET['ajout']) . " unité(s) de \"" . htmlspecialchars($_GET['produit']) . "\" ajoutée(s) au stock."; ?>
-            </div>
-        <?php endif; ?>
-
         <div>
             <h3>Menu</h3>
             <ul>
@@ -81,8 +74,40 @@ $stocks = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="stock-item <?php echo $stock['quantiteDisponible'] == 0 ? 'out-of-stock' : ''; ?>">
                     <h3><?php echo $stock['nomProduit']; ?></h3>
                     <p>Quantité actuelle : <?php echo $stock['quantiteDisponible']; ?></p>
-                    <p>Dernier ajout : <?php echo $stock['quantiteEntree']; ?> unités le <?php echo $stock['historiqueStock']; ?> par <?php echo $stock['mailUtilisateur']; ?></p>
-                    <p>Dernière sortie : <?php echo $stock['quantiteSortie']; ?> unités le <?php echo $stock['historiqueStock']; ?> par <?php echo $stock['mailUtilisateur']; ?></p>
+                    <p>
+                        Dernier ajout :
+                        <?php
+                        if (
+                            isset($_GET['ajout'], $_GET['produit'], $_GET['date'], $_GET['mail']) &&
+                            $_GET['produit'] == $stock['nomProduit']
+                        ) {
+                            $q = htmlspecialchars($_GET['ajout']);
+                            $d = htmlspecialchars($_GET['date']);
+                            $m = htmlspecialchars($_GET['mail']);
+                            echo "$q " . ($q == 1 ? "unité" : "unités") . " le $d par $m";
+                        } else {
+                            echo '-';
+                        }
+                        ?>
+                    </p>
+
+                    <p>
+                        Dernière sortie :
+                        <?php
+                        if (
+                            isset($_GET['suppression'], $_GET['produit'], $_GET['date'], $_GET['mail']) &&
+                            $_GET['produit'] == $stock['nomProduit']
+                        ) {
+                            $q = htmlspecialchars($_GET['suppression']);
+                            $d = htmlspecialchars($_GET['date']);
+                            $m = htmlspecialchars($_GET['mail']);
+                            echo "$q " . ($q == 1 ? "unité" : "unités") . " le $d par $m";
+                        } else {
+                            echo '-';
+                        }
+                        ?>
+                    </p>
+
                     <form action="ajouter_stock.php" method="POST" style="display:inline;">
                         <input type="hidden" name="stockId" value="<?php echo $stock['IDStock']; ?>">
                         <input type="number" name="quantite" placeholder="Quantité à ajouter" required>

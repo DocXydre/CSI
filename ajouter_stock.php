@@ -6,17 +6,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stockId = $_POST['stockId'];
     $quantite = $_POST['quantite'];
 
-    $sql = "UPDATE StockProduit SET quantiteDisponible = quantiteDisponible + ?, quantiteEntree = quantiteEntree + ?, historiqueStock = NOW() WHERE IDStock = ?";
+    // Récupérer l'email de l'utilisateur connecté
+    $mailUtilisateur = $_SESSION['user']['mailUtilisateur'];
+    $dateAjout = date("Y-m-d H:i:s");
+
+    // Mise à jour du stock (avec mailUtilisateur et date)
+    $sql = "UPDATE StockProduit 
+            SET quantiteDisponible = quantiteDisponible + ?, 
+                quantiteEntree = quantiteEntree + ?, 
+                historiqueStock = ?, 
+                mailUtilisateur = ? 
+            WHERE IDStock = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iis", $quantite, $quantite, $stockId);
+    $stmt->bind_param("isssi", $quantite, $quantite, $dateAjout, $mailUtilisateur, $stockId);
 
     if ($stmt->execute()) {
-        // Récupérer le nom du produit pour le message
+        // Récupération du nom du produit pour afficher dans le message
         $result = $conn->query("SELECT nomProduit FROM Produit p JOIN StockProduit s ON s.produitStocke = p.IDProduit WHERE s.IDStock = '$stockId'");
         $row = $result->fetch_assoc();
         $nomProduit = urlencode($row['nomProduit']);
-    
-        header("Location: gestion_stock.php?ajout=$quantite&produit=$nomProduit");
+        $date = urlencode($dateAjout);
+        $mail = urlencode($mailUtilisateur);
+
+        header("Location: gestion_stock.php?ajout=$quantite&produit=$nomProduit&date=$date&mail=$mail");
         exit();
     } else {
         echo "Erreur lors de l'ajout du stock : " . $stmt->error;
@@ -26,4 +38,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
+
 ?>
