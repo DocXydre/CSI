@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // Fichier qui contient la connexion à la BDD
+require_once 'config.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $identifiant = $_POST['identifiant'] ?? '';
@@ -14,10 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($utilisateur && password_verify($mot_de_passe, $utilisateur['mot_de_passe'])) {
         $_SESSION['user'] = [
-            'id' => $utilisateur['id'],
-            'nom' => $utilisateur['nom'],
-            'prenom' => $utilisateur['prenom'],
-            'email' => $utilisateur['email']
+            'nom' => $utilisateur['nomUtilisateur'],
+            'prenom' => $utilisateur['prenomUtilisateur'],
+            'role' => $utilisateur['roleUtilisateur'],
         ];
 
         header("Location: gestion_atelier.php");
