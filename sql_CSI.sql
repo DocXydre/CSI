@@ -203,7 +203,8 @@ BEGIN
   -- Mise à jour sortie + disponible
   UPDATE StockProduit
   SET quantiteSortie = quantiteSortie + NEW.quantiteVendue,
-      quantiteDisponible = quantiteDisponible - NEW.quantiteVendue
+      quantiteDisponible = quantiteDisponible - NEW.quantiteVendue,
+      historiqueStock = NOW()
   WHERE IDStock = NEW.IDStock;
 END;
 
@@ -295,3 +296,110 @@ BEGIN
   END IF;
 END;
 
+INSERT INTO Utilisateur
+VALUES ('alanwautot_54@icloud.com', '2002-12-24', 'Alan', 'Wautot', 'Administrateur', 'mdpAdmin', '2024-01-20', '2025-12-23');
+INSERT INTO Utilisateur
+VALUES ('thomasmathis@gmail.com', '2003-01-30', 'Thomas', 'Mathis', 'Woofer', 'mdpWooferThomas', '2024-06-25', '2025-08-27');
+INSERT INTO Utilisateur
+VALUES ('justinburr@outlook.com', '2003-10-17', 'Justin', 'Burr', 'Woofer', 'mdpWooferJustin', '2025-01-10', '2025-12-03');
+
+SELECT * FROM Utilisateur;
+
+INSERT INTO Tache (nomTache, description, dateTache, heureDebut, heureFin, mailUtilisateur)
+VALUES ('Nettoyer poulailler', 'Nettoyage du poulailler en retirant les saletés et en récupérant les oeufs', '2025-03-01', '15:00:00', '17:00:00', 'justinburr@outlook.com');
+INSERT INTO Tache (nomTache, description, dateTache, heureDebut, heureFin, mailUtilisateur)
+VALUES ('Traire vaches', 'Traire les vaches pour récupérer le lait', '2025-04-06', '14:00:00', '16:00:00', 'thomasmathis@gmail.com');
+
+SELECT * FROM Tache;
+
+INSERT INTO Participant VALUES ('elodiepoirier@gmail.com', '2004-07-20', 'Elodie', 'Poirier');
+INSERT INTO Participant VALUES ('elianarnaud@free.fr', NULL, 'Elian', 'Arnaud');
+
+SELECT * FROM Participant;
+
+INSERT INTO Categorie VALUES ('OEufs');
+INSERT INTO Categorie VALUES ('Laits');
+INSERT INTO Categorie VALUES ('Legumes');
+INSERT INTO Categorie VALUES ('Fromages');
+
+SELECT * FROM Categorie;
+
+INSERT INTO Atelier (nomAtelier, description, dateAtelier, heureDebut, heureFin, prixAtelier, statutAtelier, participantsMax, mailWoofer, categorieProduit)
+VALUES ('Fabrication de fromages', 'Venez fabriquer vos propres fromages avec Justin !', '2025-03-30', '14:00:00', '17:00:00', 25.00, 'EnPréparation', 5, 'justinburr@outlook.com', 'Fromages');
+INSERT INTO Atelier (nomAtelier, description, dateAtelier, heureDebut, heureFin, prixAtelier, statutAtelier, participantsMax, mailWoofer, categorieProduit)
+VALUES ('Culture biologique', 'Venez découvrir la culture biologique et ses bienfaits avec Thomas !', '2025-05-04', '10:30:00', '11:30:00', 12.00, 'EnPréparation', 3, 'thomasmathis@gmail.com', 'Legumes');
+
+SELECT * FROM Atelier;
+
+INSERT INTO Participation VALUES ('elodiepoirier@gmail.com', 1, '2025-03-15');
+INSERT INTO Participation VALUES ('elianarnaud@free.fr', 1, '2025-03-12');
+INSERT INTO Participation VALUES ('elianarnaud@free.fr', 2, '2025-05-01');
+
+SELECT * FROM Participation;
+
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Oeufs de poule (boîte de 6)', 3.50, 'OEufs');
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Lait de vache (1L)', 1.80, 'Laits');
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Lait de chèvre (1L)', 1.80, 'Laits');
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Fromage de chèvre', 4.20, 'Fromages');
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Carottes (1kg)', 2.00, 'Legumes');
+INSERT INTO Produit (nomProduit, prixUnit, categorieProduit)
+VALUES ('Salade', 1.20, 'Legumes');
+
+SELECT * FROM Produit;
+
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (10, 10, 0, NOW(), '2025-04-15', 'alanwautot_54@icloud.com', 1);
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (8, 8, 0, NOW(), '2025-03-30', 'thomasmathis@gmail.com', 2);
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (6, 6, 0, NOW(), '2025-03-28', 'justinburr@outlook.com', 3);
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (5, 5, 0, NOW(), '2025-04-10', 'justinburr@outlook.com', 4);
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (12, 12, 0, NOW(), '2025-04-20', 'thomasmathis@gmail.com', 5);
+INSERT INTO StockProduit (quantiteDisponible, quantiteEntree, quantiteSortie, historiqueStock, datePeremption, mailUtilisateur, produitStocke)
+VALUES (9, 9, 0, NOW(), '2025-03-29', 'alanwautot_54@icloud.com', 6);
+
+ALTER TABLE StockProduit AUTO_INCREMENT = 1;
+SELECT * FROM StockProduit;
+
+INSERT INTO Vente (dateVente, prixTotal, mailUtilisateur)
+VALUES ('2025-03-23', 0, 'alanwautot_54@icloud.com');
+INSERT INTO Vente (dateVente, prixTotal, mailUtilisateur)
+VALUES ('2025-03-24', 0, 'thomasmathis@gmail.com');
+INSERT INTO Vente (dateVente, prixTotal, mailUtilisateur)
+VALUES ('2025-03-25', 0, 'justinburr@outlook.com');
+
+SELECT * FROM Vente;
+
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (1, 1, 2);
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (1, 6, 1);
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (2, 2, 2);
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (2, 5, 3);
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (3, 3, 1);
+INSERT INTO DetailsVente (IDVente, IDStock, quantiteVendue)
+VALUES (3, 4, 2);
+
+SELECT * FROM DetailsVente;
+
+
+
+
+
+
+-- Trigger pour le prixTotal correct
+-- Trigger pour le nb max de participants correct (rajouter fontionnalité qui change le statut à 'Plein')
+-- Trigger pour la quantité vendue > quantité dispo correct
+-- Tous les triggers pour les dates
+-- Trigger pour mettre à jour les stocks après une vente correct
+-- Ajouter un trigger pour la date de péremption

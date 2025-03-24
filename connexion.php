@@ -1,32 +1,37 @@
 <?php
-$host = 'localhost';
-$dbname = 'FERME';
-$user = 'root'; // adapte selon ton environnement
-$pass = 'root';     // idem pour le mot de passe MySQL
+session_start();
+require_once 'config.php'; // Fichier qui contient la connexion à la BDD
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $identifiant = $_POST['identifiant'] ?? '';
+    $mot_de_passe = $_POST['motdepasse'] ?? '';
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $identifiant = $_POST['identifiant'];
-        $motdepasse = $_POST['motdepasse'];
+    $stmt = $conn->prepare("SELECT * FROM utilisateurs WHERE email = ?");
+    $stmt->bind_param("s", $identifiant);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $utilisateur = $result->fetch_assoc();
 
-        $stmt = $pdo->prepare("SELECT * FROM Utilisateur WHERE mailUtilisateur = :id AND mdpUtilisateur = :mdp");
-        $stmt->execute([
-            ':id' => $identifiant,
-            ':mdp' => $motdepasse
-        ]);
+    if ($utilisateur && password_verify($mot_de_passe, $utilisateur['mot_de_passe'])) {
+        $_SESSION['user'] = [
+            'id' => $utilisateur['id'],
+            'nom' => $utilisateur['nom'],
+            'prenom' => $utilisateur['prenom'],
+            'email' => $utilisateur['email']
+        ];
 
-        if ($stmt->rowCount() == 1) {
-            // Connexion réussie -> redirection
-            header("Location: dashboard.html");
-            exit();
-        } else {
-            echo "Identifiants incorrects.";
-        }
+        header("Location: gestion_atelier.php");
+        exit;
+    } else {
+        $erreur = "Email ou mot de passe incorrect.";
     }
-} catch (PDOException $e) {
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
 ?>
+
+<!-- Formulaire de connexion simple -->
+<form method="post">
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="mot_de_passe" placeholder="Mot de passe" required />
+    <button type="submit">Connexion</button>
+    <?php if (isset($erreur)) echo "<p style='color:red;'>$erreur</p>"; ?>
+</form>

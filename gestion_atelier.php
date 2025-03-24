@@ -1,5 +1,16 @@
 <?php
 session_start();
+require_once 'connexion.php';
+
+if (!isset($_SESSION['user'])) {
+    header('Location: connexion.php');
+    exit;
+}
+
+$nom = $_SESSION['user']['nom'];
+$prenom = $_SESSION['user']['prenom'];
+
+session_start();
 $host = 'localhost';
 $dbname = 'FERME';
 $user = 'root';
