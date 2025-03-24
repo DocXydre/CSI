@@ -1,14 +1,6 @@
 <?php
+session_start();
 include 'config.php';
-
-// Récupérer les informations de l'utilisateur connecté
-$mailUtilisateur = $_SESSION['mailUtilisateur'];
-$sql = "SELECT * FROM Utilisateur WHERE mailUtilisateur = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $mailUtilisateur);
-$stmt->execute();
-$result = $stmt->get_result();
-$utilisateur = $result->fetch_assoc();
 
 // Récupérer les stocks de la base de données
 $sql = "SELECT s.*, p.nomProduit FROM StockProduit s JOIN Produit p ON s.produitStocke = p.IDProduit";
@@ -51,22 +43,22 @@ $stocks = $result->fetch_all(MYSQLI_ASSOC);
                     </a>
                 </li>
                 <li class="menu-item selected">
-                    <a href="gestion_stock.html">
+                    <a href="gestion_stock.php">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_woofer.html">
+                    <a href="gestion_woofer.php">
                         <img src="src/icon/woofer-icon.png" alt="Woofer"> <span>Woofer</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="gestion_atelier.html">
+                    <a href="gestion_atelier.php">
                         <img src="src/icon/atelier-icon.png" alt="Ateliers"> <span>Ateliers</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="ventes.html">
+                    <a href="vente.php">
                         <img src="src/icon/sales-icon.png" alt="Ventes"> <span>Ventes</span>
                     </a>
                 </li>
