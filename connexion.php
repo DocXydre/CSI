@@ -1,30 +1,7 @@
-=<?php
+<?php
 session_start();
-require_once 'config.php'; 
+include 'config.php'; 
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $identifiant = $_POST['identifiant'] ?? '';
-    $mot_de_passe = $_POST['motdepasse'] ?? '';
-
-    $stmt = $conn->prepare("SELECT * FROM Utilisateur WHERE mailUtilisateur = ?");
-    $stmt->bind_param("s", $identifiant);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $utilisateur = $result->fetch_assoc();
-
-    if ($utilisateur && password_verify($mot_de_passe, $utilisateur['mdpUtilisateur'])) {
-        $_SESSION['user'] = [
-            'nom' => $utilisateur['nomUtilisateur'],
-            'prenom' => $utilisateur['prenomUtilisateur'],
-            'role' => $utilisateur['roleUtilisateur'],
-        ];
-
-        header("Location: gestion_atelier.php");
-        exit;
-    } else {
-        $erreur = "Email ou mot de passe incorrect.";
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -79,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="box-connexion">
         <h2>Connexion</h2>
-        <form action="connexion.php" method="POST">
+        <form action="test.php" method="POST">
             <input type="text" name="identifiant" placeholder="Identifiant" required>
             <input type="password" name="motdepasse" placeholder="Mot de passe" required>
             <button type="submit">Valider</button>

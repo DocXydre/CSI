@@ -1,16 +1,5 @@
 <?php
-session_start();
-$host = 'localhost';
-$dbname = 'FERME';
-$user = 'root';
-$pass = 'root';
-
-// Connexion à la base de données avec mysqli
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
+include 'config.php';
 
 // Récupérer les informations de l'utilisateur connecté
 $mailUtilisateur = $_SESSION['mailUtilisateur'];
@@ -49,8 +38,8 @@ $stocks = $result->fetch_all(MYSQLI_ASSOC);
     <div class="side-box left-box">
         <div class="profil">
             <img src="src/profil.jpeg" class="profil" alt="Photo de profil">
-            <h3><?php echo $utilisateur['prenomUtilisateur'] . ' ' . $utilisateur['nomUtilisateur']; ?></h3>
-            <h4><?php echo $utilisateur['roleUtilisateur']; ?></h4>
+            <h3><?php echo $_SESSION['user']['nom'] . ' ' . $_SESSION['user']['prenom']; ?></h3>
+            <h4><?php echo $_SESSION['user']['role']; ?></h4>
         </div>
         <div>
             <h3>Menu</h3>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'connexion.php';
+include 'config.php';
 
 if (!isset($_SESSION['user'])) {
     header('Location: connexion.php');
@@ -29,7 +29,7 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
     <div class="side-box left-box">
         <div class="profil">
             <img src="src/profil.jpeg" class="profil" alt="Photo de profil">
-            <h3><?php echo $nom . ' ' . $prenom; ?></h3>
+            <h3><?php echo $prenom . ' ' . $nom; ?></h3>
             <h4><?php echo $role; ?></h4>
         </div>
         <div>
