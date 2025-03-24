@@ -77,6 +77,22 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                 <label for="prix">Prix (€) :</label>
                 <input type="number" id="prix" name="prix" required>
 
+                <label for="places">Nombre de places :</label>
+                <input type="number" id="places" name="places" required>
+
+                <label for="description">Description :</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+                
+                <label for="responsable">Responsable :</label>
+                <select id="responsable" name="responsable" required>
+                    <?php
+                    $sqlResponsables = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
+                    $resultResponsables = $conn->query($sqlResponsables);
+                    while ($row = $resultResponsables->fetch_assoc()) {
+                        echo "<option value='" . $row['mailUtilisateur'] . "'>" . $row['prenomUtilisateur'] . " " . $row['nomUtilisateur'] . "</option>";
+                    }
+                    ?>
+
                 <button type="submit">Ajouter</button>
             </form>
         </div>
@@ -88,6 +104,21 @@ $ateliers = $result->fetch_all(MYSQLI_ASSOC);
                     <h3><?php echo $atelier['nomAtelier']; ?></h3>
                     <p>Date : <?php echo $atelier['dateAtelier']; ?></p>
                     <p>Prix : <?php echo $atelier['prixAtelier']; ?> €</p>
+                    // afficher le nombre de participant sur le nombre de place disponnible
+                    <p>Places disponibles : <?php echo $atelier['placesDisponibles']; ?></p>
+                    <p>Nombre de participants : <?php echo $atelier['nombreParticipants']; ?></p>
+                    <p>Participants : 
+                        <?php
+                        $sqlParticipants = "SELECT prenom FROM Participants WHERE IDAtelier = " . $atelier['IDAtelier'];
+                        $resultParticipants = $conn->query($sqlParticipants);
+                        $participants = $resultParticipants->fetch_all(MYSQLI_ASSOC);
+                        foreach ($participants as $participant) {
+                            echo $participant['prenom'] . ' ';
+                        }
+                        ?>
+                    </p>
+                    <p>Statut : <?php echo $atelier['statutAtelier']; ?></p>
+                    <p>Responsable : <?php echo $atelier['nomUtilisateur']; ?></p>
                     <button onclick="openModal(<?php echo $atelier['IDAtelier']; ?>)">Gérer</button>
                 </div>
             <?php endforeach; ?>
