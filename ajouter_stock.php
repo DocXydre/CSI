@@ -1,15 +1,6 @@
 <?php
-$host = 'localhost';
-$dbname = 'FERME';
-$user = 'root';
-$pass = 'root';
-
-// Connexion à la base de données avec mysqli
-$conn = new mysqli($host, $user, $pass, $dbname);
-
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
+session_start();
+include 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stockId = $_POST['stockId'];
@@ -20,7 +11,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("iis", $quantite, $quantite, $stockId);
 
     if ($stmt->execute()) {
-        header("Location: gestion_stock.php");
+        // Récupérer le nom du produit pour le message
+        $result = $conn->query("SELECT nomProduit FROM Produit p JOIN StockProduit s ON s.produitStocke = p.IDProduit WHERE s.IDStock = '$stockId'");
+        $row = $result->fetch_assoc();
+        $nomProduit = urlencode($row['nomProduit']);
+    
+        header("Location: gestion_stock.php?ajout=$quantite&produit=$nomProduit");
         exit();
     } else {
         echo "Erreur lors de l'ajout du stock : " . $stmt->error;

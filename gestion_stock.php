@@ -33,6 +33,14 @@ $stocks = $result->fetch_all(MYSQLI_ASSOC);
             <h3><?php echo $_SESSION['user']['nom'] . ' ' . $_SESSION['user']['prenom']; ?></h3>
             <h4><?php echo $_SESSION['user']['role']; ?></h4>
         </div>
+
+        <!-- ✅ MESSAGE D'AJOUT -->
+        <?php if (isset($_GET['ajout']) && isset($_GET['produit'])): ?>
+            <div class="confirmation-message">
+                ✅ <?php echo htmlspecialchars($_GET['ajout']) . " unité(s) de \"" . htmlspecialchars($_GET['produit']) . "\" ajoutée(s) au stock."; ?>
+            </div>
+        <?php endif; ?>
+
         <div>
             <h3>Menu</h3>
             <ul>
