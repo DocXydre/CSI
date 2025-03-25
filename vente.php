@@ -65,31 +65,79 @@ $transactions = $result->fetch_all(MYSQLI_ASSOC);
             </ul>
         </div>
     </div>
+    <div class="main-content" style="margin-left: 250px; margin-right: 250px; padding: 20px;">
+        <div class="container" style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9;">
+            <div class="section">
+                <div class="title">Ajouter une Vente</div>
+                <form action="ajout_vente.php" method="POST">
+                    <label for="dateVente">Date de la vente :</label>
+                    <input type="date" id="dateVente" name="dateVente" required>
 
-    <div class="container">
-        <div class="section">
-            <div class="title">Ajouter une Vente</div>
-            <form action="ajout_vente.php" method="POST">
-                <label for="dateVente">Date de la vente :</label>
-                <input type="date" id="dateVente" name="dateVente" required>
+                    <label for="mailVendeur">Vendeur :</label>
+                    <select id="mailVendeur" name="mailVendeur" required>
+                        <?php
+                        $sql = "SELECT mailUtilisateur, prenomUtilisateur, nomUtilisateur FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
+                        $result = $conn->query($sql);
+                        $vendeurs = $result->fetch_all(MYSQLI_ASSOC);
+                        foreach ($vendeurs as $vendeur):
+                        ?>
+                            <option value="<?php echo $vendeur['mailUtilisateur']; ?>">
+                                <?php echo $vendeur['prenomUtilisateur'] . ' ' . $vendeur['nomUtilisateur']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
 
-                <label for="mailVendeur">Vendeur :</label>
-                <select id="mailVendeur" name="mailVendeur" required>
-                    <?php
-                    $sql = "SELECT mailUtilisateur, prenomUtilisateur, nomUtilisateur FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
-                    $result = $conn->query($sql);
-                    $vendeurs = $result->fetch_all(MYSQLI_ASSOC);
-                    foreach ($vendeurs as $vendeur):
-                    ?>
-                        <option value="<?php echo $vendeur['mailUtilisateur']; ?>">
-                            <?php echo $vendeur['prenomUtilisateur'] . ' ' . $vendeur['nomUtilisateur']; ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                    <div id="produits-container">
+                        <div class="produit-item">
+                            <label for="produit-1">Produit :</label>
+                            <select id="produit-1" name="produits[0][id]" required>
+                                <?php   
+                                $sql = "SELECT IDProduit, nomProduit FROM Produit";
+                                $result = $conn->query($sql);
+                                $produits = $result->fetch_all(MYSQLI_ASSOC);
+                                foreach ($produits as $produit):
+                                ?>
+                                    <option value="<?php echo $produit['IDProduit']; ?>">
+                                        <?php echo $produit['nomProduit']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
-                <button type="submit">Ajouter</button>
-            </form>
+                            <label for="quantite-1">Quantité :</label>
+                            <input type="number" id="quantite-1" name="produits[0][quantite]" min="1" required>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="ajouterProduit()">Ajouter un autre produit</button>
+                    <button type="submit">Ajouter</button>
+                </form>
+            </div>
         </div>
+
+        <script>
+            let produitIndex = 1;
+
+            function ajouterProduit() {
+                const container = document.getElementById('produits-container');
+                const newProduit = document.createElement('div');
+                newProduit.classList.add('produit-item');
+                newProduit.innerHTML = `
+                    <label for="produit-${produitIndex}">Produit :</label>
+                    <select id="produit-${produitIndex}" name="produits[${produitIndex}][id]" required>
+                        <?php foreach ($produits as $produit): ?>
+                            <option value="<?php echo $produit['IDProduit']; ?>">
+                                <?php echo $produit['nomProduit']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <label for="quantite-${produitIndex}">Quantité :</label>
+                    <input type="number" id="quantite-${produitIndex}" name="produits[${produitIndex}][quantite]" min="1" required>
+                `;
+                container.appendChild(newProduit);
+                produitIndex++;
+            }
+        </script>
 
         <div class="section">
             <div class="title">Liste des Transactions</div>

@@ -2,48 +2,9 @@
 session_start();
 include 'config.php';
 
-$message = "";
 
-// Traitement de l'ajout
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ajout_woofer'])) {
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $dateNaissance = $_POST['dateNaissance'];
-    $dateArrivee = $_POST['dateArrivee'];
-    $dateDepart = $_POST['dateDepart'];
-    $motdepasse = $_POST['motdepasse'];
 
-    $mail = strtolower($prenom . $nom . '@example.com');
 
-    $sql = "INSERT INTO Utilisateur (mailUtilisateur, dateNaissance, prenomUtilisateur, nomUtilisateur, roleUtilisateur, mdpUtilisateur, dateArrivee, dateDepart) 
-            VALUES (?, ?, ?, ?, 'Woofer', ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssss", $mail, $dateNaissance, $prenom, $nom, $motdepasse, $dateArrivee, $dateDepart);
-
-    if ($stmt->execute()) {
-        $message = "✅ Woofer ajouté avec succès !";
-    } else {
-        $message = "❌ Erreur lors de l'ajout : " . $stmt->error;
-    }
-
-    $stmt->close();
-}
-
-// Traitement de la suppression
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['supprimer_woofer'])) {
-    $mail = $_POST['mailWoofer'];
-
-    $stmt = $conn->prepare("DELETE FROM Utilisateur WHERE mailUtilisateur = ? AND roleUtilisateur = 'Woofer'");
-    $stmt->bind_param("s", $mail);
-
-    if ($stmt->execute()) {
-        $message = "✅ Woofer supprimé avec succès.";
-    } else {
-        $message = "❌ Erreur lors de la suppression : " . $stmt->error;
-    }
-
-    $stmt->close();
-}
 
 // Récupérer les woofers
 $sql = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
@@ -190,15 +151,26 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
                     <p>Date de départ : <?php echo $woofer['dateDepart']; ?></p>
 
                     <div class="action-buttons">
-                        <form action="modifier_woofer.php" method="POST">
-                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
-                            <button type="submit" class="edit">Modifier</button>
-                        </form>
-
-                        <form action="gestion_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
+                        <form action="supprimer_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
                             <input type="hidden" name="supprimer_woofer" value="1">
                             <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
                             <button type="submit" class="delete">Supprimer</button>
+                        </form>
+
+                        <button class="edit" onclick="showEditForm('<?php echo $woofer['mailUtilisateur']; ?>')">Modifier dates</button>
+                    </div>
+
+                    <div id="edit-form-<?php echo $woofer['mailUtilisateur']; ?>" style="display:none; margin-top: 10px;">
+                        <form action="modifier_woofer.php" method="POST">
+                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
+
+                            <label for="dateArrivee-<?php echo $woofer['mailUtilisateur']; ?>">Nouvelle date d'arrivée :</label>
+                            <input type="date" id="dateArrivee-<?php echo $woofer['mailUtilisateur']; ?>" name="dateArrivee" required>
+
+                            <label for="dateDepart-<?php echo $woofer['mailUtilisateur']; ?>">Nouvelle date de départ :</label>
+                            <input type="date" id="dateDepart-<?php echo $woofer['mailUtilisateur']; ?>" name="dateDepart" required>
+
+                            <button type="submit">Enregistrer</button>
                         </form>
                     </div>
 
@@ -230,6 +202,13 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
             <?php endforeach; ?>
         </div>
     </div>
+
+    <script>
+        function showEditForm(mailWoofer) {
+            const form = document.getElementById(`edit-form-${mailWoofer}`);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 
     <div class="side-box right-box">
         <div class="notif">

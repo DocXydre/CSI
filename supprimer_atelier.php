@@ -5,7 +5,7 @@ include 'config.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $atelierId = $_POST['atelierId'];
 
-    $sql = "DELETE FROM Atelier WHERE IDAtelier = ?";
+    $sql = "UPDATE Atelier SET statutAtelier = 'Annulé' WHERE IDAtelier = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $atelierId);
 
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: gestion_atelier.php");
         exit();
     } else {
-        echo "Erreur lors de la suppression de l'atelier : " . $stmt->error;
+        echo "Erreur lors de la mise à jour du statut de l'atelier : " . $stmt->error;
     }
 
     $stmt->close();

@@ -10,14 +10,14 @@ if (!isset($_SESSION['user'])) {
 $nom = $_SESSION['user']['nom'];
 $prenom = $_SESSION['user']['prenom'];
 $role = $_SESSION['user']['role'];
+$mail = $_SESSION['user']['mailUtilisateur'];
 
-// Récupérer les ateliers de la base de données
 $sql = "SELECT * FROM Atelier";
 $result = $conn->query($sql);
 $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 
-// Calculer le nombre de participants et les places disponibles pour chaque atelier
-foreach ($ateliers as &$atelier) {
+$updatedAteliers = [];
+foreach ($ateliers as $atelier) {
     $sqlParticipants = "SELECT COUNT(*) as nombreParticipants FROM Participation WHERE IDAtelier = ?";
     $stmtParticipants = $conn->prepare($sqlParticipants);
     $stmtParticipants->bind_param("i", $atelier['IDAtelier']);
@@ -26,7 +26,9 @@ foreach ($ateliers as &$atelier) {
     $rowParticipants = $resultParticipants->fetch_assoc();
     $atelier['nombreParticipants'] = $rowParticipants['nombreParticipants'];
     $atelier['placesDisponibles'] = $atelier['participantsMax'] - $atelier['nombreParticipants'];
+    $updatedAteliers[] = $atelier;
 }
+$ateliers = $updatedAteliers;
 ?>
 
 <!DOCTYPE html>
@@ -84,12 +86,6 @@ foreach ($ateliers as &$atelier) {
             <h3>Menu</h3>
             <ul>
                 <li class="menu-item">
-                    <a href="dashboard.html">
-                        <img src="src/icon/dashboard-icon.png" alt="Tableau de bord">
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="menu-item">
                     <a href="gestion_stock.php">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>
@@ -132,7 +128,7 @@ foreach ($ateliers as &$atelier) {
                 <textarea id="description" name="description" rows="4" required></textarea>
 
                 <label for="responsable">Responsable :</label>
-                <select id="responsable" name="responsable" required>
+                <select id="responsable" name="nouveau_responsable" required>
                     <?php
                     $sqlResponsables = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
                     $resultResponsables = $conn->query($sqlResponsables);
@@ -235,9 +231,7 @@ foreach ($ateliers as &$atelier) {
                     <form action="gerer_participants.php" method="POST">
                         <input type="hidden" name="atelierId" value="${atelierId}">
                         <label for="participants">Ajouter un participant :</label>
-                        <input type="text" id="participants" name="participants" placeholder="Email du participant" required>
-                        // ajouter le nom et prénom
-                        
+                        <input type="text" id="participants" name="participants" placeholder="Email du participant" required>   
                         <button type="submit">Ajouter</button>
                     </form>
                 `;
@@ -249,7 +243,25 @@ foreach ($ateliers as &$atelier) {
                         <button type="submit">Annuler</button>
                     </form>
                 `;
-            }
+            } else if (action === 'modifier') {
+                content = `
+                    <h3>Modifier le responsable</h3>
+                    <form action="modifier_responsable.php" method="POST">
+                        <input type="hidden" name="atelierId" value="${atelierId}">
+                        <label for="responsable">Nouveau responsable :</label>
+                        <select id="responsable" name="responsable" required>
+                            <?php
+                            $sqlResponsables = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
+                            $resultResponsables = $conn->query($sqlResponsables);
+                            while ($row = $resultResponsables->fetch_assoc()) {
+                                echo "<option value='" . $row['mailUtilisateur'] . "'>" . $row['prenomUtilisateur'] . " " . $row['nomUtilisateur'] . " (" . $row['mailUtilisateur'] . ")</option>";
+                            }
+                            ?>
+                        </select>
+                        <button type="submit">Modifier</button> 
+                    </form>
+                `;
+            }   
             document.getElementById('modal-body').innerHTML = content;
             document.getElementById('modal').style.display = 'block';
         }
