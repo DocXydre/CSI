@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newDate = $_POST['newDate'];
     $dateAtelier = date('Y-m-d', strtotime($newDate));
     $heureDebut = date('H:i:s', strtotime($newDate));
-    $heureFin = date('H:i:s', strtotime($newDate . ' + 2 hours')); // Exemple : durée de 2 heures
+    $heureFin = date('H:i:s', strtotime($newDate . ' + 2 hours'));
 
     $sql = "UPDATE Atelier SET dateAtelier = ?, heureDebut = ?, heureFin = ? WHERE IDAtelier = ?";
     $stmt = $conn->prepare($sql);

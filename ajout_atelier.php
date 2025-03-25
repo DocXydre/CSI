@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $responsable = $_POST['responsable'];
     $dateAtelier = date('Y-m-d', strtotime($date));
     $heureDebut = date('H:i:s', strtotime($date));
-    $heureFin = date('H:i:s', strtotime($date . ' + 2 hours')); // Exemple : durée de 2 heures
+    $heureFin = date('H:i:s', strtotime($date . ' + 2 hours'));
 
     $sql = "INSERT INTO Atelier (nomAtelier, description, dateAtelier, heureDebut, heureFin, prixAtelier, statutAtelier, participantsMax, mailWoofer, categorieProduit) VALUES (?, ?, ?, ?, ?, ?, 'EnPréparation', ?, ?, 'Fromages')";
     $stmt = $conn->prepare($sql);

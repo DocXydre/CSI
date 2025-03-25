@@ -4,7 +4,6 @@ $dbname = 'FERME';
 $user = 'root';
 $pass = 'root';
 
-// Connexion à la base de données avec mysqli
 $conn = new mysqli($host, $user, $pass, $dbname);
 
 if ($conn->connect_error) {

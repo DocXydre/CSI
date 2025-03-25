@@ -2,7 +2,6 @@
 session_start();
 include 'config.php';
 
-// Récupérer les stocks de la base de données
 $sql = "SELECT s.*, p.nomProduit FROM StockProduit s JOIN Produit p ON s.produitStocke = p.IDProduit";
 $result = $conn->query($sql);
 $stocks = $result->fetch_all(MYSQLI_ASSOC);

@@ -4,7 +4,6 @@ include 'config.php';
 
 $message = "";
 
-// Traitement de l'ajout
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ajout_woofer'])) {
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
@@ -29,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ajout_woofer'])) {
     $stmt->close();
 }
 
-// Traitement de la suppression
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['supprimer_woofer'])) {
     $mail = $_POST['mailWoofer'];
 
@@ -45,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['supprimer_woofer'])) 
     $stmt->close();
 }
 
-// Récupérer les woofers
 $sql = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
 $result = $conn->query($sql);
 $woofers = $result->fetch_all(MYSQLI_ASSOC);

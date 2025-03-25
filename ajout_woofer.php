@@ -10,10 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dateDepart = $_POST['dateDepart'];
     $motdepasse = $_POST['motdepasse'];
 
-    // Génération d'un email fictif
     $mail = strtolower($prenom . $nom . '@example.com');
 
-    // Préparer la requête SQL
     $sql = "INSERT INTO Utilisateur (mailUtilisateur, dateNaissance, prenomUtilisateur, nomUtilisateur, roleUtilisateur, mdpUtilisateur, dateArrivee, dateDepart) 
             VALUES (?, ?, ?, ?, 'Woofer', ?, ?, ?)";
     $stmt = $conn->prepare($sql);

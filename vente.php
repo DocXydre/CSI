@@ -2,7 +2,6 @@
 session_start();
 include 'config.php';
 
-// Récupérer les transactions de la base de données
 $sql = "SELECT v.*, u.prenomUtilisateur, u.nomUtilisateur FROM Vente v JOIN Utilisateur u ON v.mailUtilisateur = u.mailUtilisateur";
 $result = $conn->query($sql);
 $transactions = $result->fetch_all(MYSQLI_ASSOC);

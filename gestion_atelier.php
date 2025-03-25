@@ -11,12 +11,10 @@ $nom = $_SESSION['user']['nom'];
 $prenom = $_SESSION['user']['prenom'];
 $role = $_SESSION['user']['role'];
 
-// Récupérer les ateliers de la base de données
 $sql = "SELECT * FROM Atelier";
 $result = $conn->query($sql);
 $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 
-// Calculer le nombre de participants et les places disponibles pour chaque atelier
 foreach ($ateliers as &$atelier) {
     $sqlParticipants = "SELECT COUNT(*) as nombreParticipants FROM Participation WHERE IDAtelier = ?";
     $stmtParticipants = $conn->prepare($sqlParticipants);
@@ -236,8 +234,7 @@ foreach ($ateliers as &$atelier) {
                         <input type="hidden" name="atelierId" value="${atelierId}">
                         <label for="participants">Ajouter un participant :</label>
                         <input type="text" id="participants" name="participants" placeholder="Email du participant" required>
-                        // ajouter le nom et prénom
-                        
+
                         <button type="submit">Ajouter</button>
                     </form>
                 `;

@@ -9,7 +9,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mailUtilisateur = $_SESSION['user']['mailUtilisateur'];
     $dateSuppression = date("Y-m-d H:i:s");
 
-    // Mise à jour du stock
     $sql = "UPDATE StockProduit 
             SET quantiteDisponible = GREATEST(quantiteDisponible - ?, 0), 
                 quantiteSortie = ?, 
@@ -20,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("isssi", $quantite, $quantite, $dateSuppression, $mailUtilisateur, $stockId);
 
     if ($stmt->execute()) {
-        // Récupérer le nom du produit
         $result = $conn->query("SELECT nomProduit FROM Produit p JOIN StockProduit s ON s.produitStocke = p.IDProduit WHERE s.IDStock = '$stockId'");
         $row = $result->fetch_assoc();
         $nomProduit = urlencode($row['nomProduit']);

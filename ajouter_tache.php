@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dateTache = $_POST['dateTache'];
     $date = date('Y-m-d', strtotime($dateTache));
     $heureDebut = date('H:i:s', strtotime($dateTache));
-    $heureFin = date('H:i:s', strtotime($dateTache . ' + 1 hour')); // Exemple : durée de 1 heure
+    $heureFin = date('H:i:s', strtotime($dateTache . ' + 1 hour'));
 
     $sql = "INSERT INTO Tache (nomTache, description, dateTache, heureDebut, heureFin, mailUtilisateur) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
