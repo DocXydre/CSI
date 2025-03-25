@@ -2,11 +2,47 @@
 session_start();
 include 'config.php';
 
+$message = "";
 
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['ajout_woofer'])) {
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $dateNaissance = $_POST['dateNaissance'];
+    $dateArrivee = $_POST['dateArrivee'];
+    $dateDepart = $_POST['dateDepart'];
+    $motdepasse = $_POST['motdepasse'];
 
+    $mail = strtolower($prenom . $nom . '@example.com');
 
+    $sql = "INSERT INTO Utilisateur (mailUtilisateur, dateNaissance, prenomUtilisateur, nomUtilisateur, roleUtilisateur, mdpUtilisateur, dateArrivee, dateDepart) 
+            VALUES (?, ?, ?, ?, 'Woofer', ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssss", $mail, $dateNaissance, $prenom, $nom, $motdepasse, $dateArrivee, $dateDepart);
 
-// Récupérer les woofers
+    if ($stmt->execute()) {
+        $message = "✅ Woofer ajouté avec succès !";
+    } else {
+        $message = "❌ Erreur lors de l'ajout : " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['supprimer_woofer'])) {
+    $mail = $_POST['mailWoofer'];
+
+    $stmt = $conn->prepare("DELETE FROM Utilisateur WHERE mailUtilisateur = ? AND roleUtilisateur = 'Woofer'");
+    $stmt->bind_param("s", $mail);
+
+    if ($stmt->execute()) {
+        $message = "✅ Woofer supprimé avec succès.";
+    } else {
+        $message = "❌ Erreur lors de la suppression : " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
 $sql = "SELECT * FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
 $result = $conn->query($sql);
 $woofers = $result->fetch_all(MYSQLI_ASSOC);
@@ -151,7 +187,7 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
                     <p>Date de départ : <?php echo $woofer['dateDepart']; ?></p>
 
                     <div class="action-buttons">
-                        <form action="supprimer_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
+                        <form action="gestion_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
                             <input type="hidden" name="supprimer_woofer" value="1">
                             <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
                             <button type="submit" class="delete">Supprimer</button>
