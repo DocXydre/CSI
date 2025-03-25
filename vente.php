@@ -36,12 +36,6 @@ $transactions = $result->fetch_all(MYSQLI_ASSOC);
             <h3>Menu</h3>
             <ul>
                 <li class="menu-item">
-                    <a href="dashboard.html">
-                        <img src="src/icon/dashboard-icon.png" alt="Tableau de bord">
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="menu-item">
                     <a href="gestion_stock.php">
                         <img src="src/icon/stock-icon.png" alt="Stock"> <span>Stock</span>
                     </a>

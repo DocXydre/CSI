@@ -33,7 +33,7 @@ include 'config.php';
             margin-bottom: 20px;
         }
         .box-connexion input {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -56,7 +56,7 @@ include 'config.php';
 <body>
     <div class="box-connexion">
         <h2>Connexion</h2>
-        <form action="test.php" method="POST">
+        <form action="gestion_connexion.php" method="POST">
             <input type="text" name="identifiant" placeholder="Identifiant" required>
             <input type="password" name="motdepasse" placeholder="Mot de passe" required>
             <button type="submit">Valider</button>
