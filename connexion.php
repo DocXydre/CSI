@@ -56,7 +56,7 @@ include 'config.php';
 <body>
     <div class="box-connexion">
         <h2>Connexion</h2>
-        <form action="gestion_connexion.php" method="POST">
+        <form action="test.php" method="POST">
             <input type="text" name="identifiant" placeholder="Identifiant" required>
             <input type="password" name="motdepasse" placeholder="Mot de passe" required>
             <button type="submit">Valider</button>

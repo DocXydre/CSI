@@ -186,15 +186,26 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
                     <p>Date de départ : <?php echo $woofer['dateDepart']; ?></p>
 
                     <div class="action-buttons">
-                        <form action="modifier_woofer.php" method="POST">
-                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
-                            <button type="submit" class="edit">Modifier</button>
-                        </form>
-
                         <form action="gestion_woofer.php" method="POST" onsubmit="return confirm('Supprimer ce woofer ?');">
                             <input type="hidden" name="supprimer_woofer" value="1">
                             <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
                             <button type="submit" class="delete">Supprimer</button>
+                        </form>
+
+                        <button class="edit" onclick="showEditForm('<?php echo $woofer['mailUtilisateur']; ?>')">Modifier dates</button>
+                    </div>
+
+                    <div id="edit-form-<?php echo $woofer['mailUtilisateur']; ?>" style="display:none; margin-top: 10px;">
+                        <form action="modifier_woofer.php" method="POST">
+                            <input type="hidden" name="mailWoofer" value="<?php echo $woofer['mailUtilisateur']; ?>">
+
+                            <label for="dateArrivee-<?php echo $woofer['mailUtilisateur']; ?>">Nouvelle date d'arrivée :</label>
+                            <input type="date" id="dateArrivee-<?php echo $woofer['mailUtilisateur']; ?>" name="dateArrivee" required>
+
+                            <label for="dateDepart-<?php echo $woofer['mailUtilisateur']; ?>">Nouvelle date de départ :</label>
+                            <input type="date" id="dateDepart-<?php echo $woofer['mailUtilisateur']; ?>" name="dateDepart" required>
+
+                            <button type="submit">Enregistrer</button>
                         </form>
                     </div>
 
@@ -226,6 +237,13 @@ $woofers = $result->fetch_all(MYSQLI_ASSOC);
             <?php endforeach; ?>
         </div>
     </div>
+
+    <script>
+        function showEditForm(mailWoofer) {
+            const form = document.getElementById(`edit-form-${mailWoofer}`);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 
     <div class="side-box right-box">
         <div class="notif">

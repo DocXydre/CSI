@@ -150,53 +150,32 @@ while ($row = $result->fetch_assoc()) {
                 </li>
             </ul>
         </div>
-=======
-        <img src="src/profil.jpeg" class="profil" alt="Photo de profil">
-        <h3><?php echo $_SESSION['user']['nom'] . ' ' . $_SESSION['user']['prenom']; ?></h3>
-        <h4><?php echo $_SESSION['user']['role']; ?></h4>
     </div>
-    <div>
-        <h3>Menu</h3>
-        <ul>
-            <li class="menu-item"><a href="dashboard.html"><img src="src/icon/dashboard-icon.png" alt="Dashboard"><span>Tableau de bord</span></a></li>
-            <li class="menu-item"><a href="gestion_stock.php"><img src="src/icon/stock-icon.png" alt="Stock"><span>Stock</span></a></li>
-            <li class="menu-item"><a href="gestion_woofer.php"><img src="src/icon/woofer-icon.png" alt="Woofer"><span>Woofer</span></a></li>
-            <li class="menu-item"><a href="gestion_atelier.php"><img src="src/icon/atelier-icon.png" alt="Ateliers"><span>Ateliers</span></a></li>
-            <li class="menu-item selected"><a href="vente.php"><img src="src/icon/sales-icon.png" alt="Ventes"><span>Ventes</span></a></li>
-        </ul>
-    </div>
-</div>
 
-<!-- Contenu principal -->
-<div class="container">
-    <div class="vente-form">
-        <h2>Nouvelle Vente</h2>
+    <div class="container">
+        <div class="section">
+            <div class="title">Ajouter une Vente</div>
+            <form action="ajout_vente.php" method="POST">
+                <label for="dateVente">Date de la vente :</label>
+                <input type="date" id="dateVente" name="dateVente" required>
 
-        <?php if ($message): ?>
-            <div class="message"><?php echo $message; ?></div>
-        <?php endif; ?>
+                <label for="mailVendeur">Vendeur :</label>
+                <select id="mailVendeur" name="mailVendeur" required>
+                    <?php
+                    $sql = "SELECT mailUtilisateur, prenomUtilisateur, nomUtilisateur FROM Utilisateur WHERE roleUtilisateur = 'Woofer'";
+                    $result = $conn->query($sql);
+                    $vendeurs = $result->fetch_all(MYSQLI_ASSOC);
+                    foreach ($vendeurs as $vendeur):
+                    ?>
+                        <option value="<?php echo $vendeur['mailUtilisateur']; ?>">
+                            <?php echo $vendeur['prenomUtilisateur'] . ' ' . $vendeur['nomUtilisateur']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-        <form method="POST" onsubmit="return prepareProduitsAvantEnvoi();">
-            <label for="dateVente">Date de la vente :</label>
-            <input type="datetime-local" name="dateVente" id="dateVente" required>
-
-            <div id="produits-container">
-                <div class="ligne-produit">
-                    <select>
-                        <?php foreach ($stocks as $stock): ?>
-                            <option value="<?php echo $stock['IDStock']; ?>"><?php echo $stock['nomProduit']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <input type="number" placeholder="Quantité" min="1" value="1">
-                </div>
-            </div>
-
-            <button type="button" class="add-btn" onclick="ajouterLigneProduit()">+ Ajouter un produit</button>
-            <input type="hidden" name="produits" id="produits-json">
-            <button type="submit">Enregistrer la vente</button>
-        </form>
->>>>>>> Stashed changes
-    </div>
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
 
     <div class="ventes-liste">
         <h2>Historique des Ventes</h2>
