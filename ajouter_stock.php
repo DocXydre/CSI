@@ -6,11 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stockId = $_POST['stockId'];
     $quantite = $_POST['quantite'];
 
-    // Récupérer l'email de l'utilisateur connecté
     $mailUtilisateur = $_SESSION['user']['mailUtilisateur'];
     $dateAjout = date("Y-m-d H:i:s");
 
-    // Mise à jour du stock (avec mailUtilisateur et date)
     $sql = "UPDATE StockProduit 
             SET quantiteDisponible = quantiteDisponible + ?, 
                 quantiteEntree = quantiteEntree + ?, 
@@ -21,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("isssi", $quantite, $quantite, $dateAjout, $mailUtilisateur, $stockId);
 
     if ($stmt->execute()) {
-        // Récupération du nom du produit pour afficher dans le message
         $result = $conn->query("SELECT nomProduit FROM Produit p JOIN StockProduit s ON s.produitStocke = p.IDProduit WHERE s.IDStock = '$stockId'");
         $row = $result->fetch_assoc();
         $nomProduit = urlencode($row['nomProduit']);

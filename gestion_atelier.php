@@ -16,8 +16,8 @@ $sql = "SELECT * FROM Atelier";
 $result = $conn->query($sql);
 $ateliers = $result->fetch_all(MYSQLI_ASSOC);
 
-$updatedAteliers = [];
-foreach ($ateliers as $atelier) {
+// Calculer le nombre de participants et les places disponibles pour chaque atelier
+foreach ($ateliers as &$atelier) {
     $sqlParticipants = "SELECT COUNT(*) as nombreParticipants FROM Participation WHERE IDAtelier = ?";
     $stmtParticipants = $conn->prepare($sqlParticipants);
     $stmtParticipants->bind_param("i", $atelier['IDAtelier']);
@@ -231,7 +231,9 @@ $ateliers = $updatedAteliers;
                     <form action="gerer_participants.php" method="POST">
                         <input type="hidden" name="atelierId" value="${atelierId}">
                         <label for="participants">Ajouter un participant :</label>
-                        <input type="text" id="participants" name="participants" placeholder="Email du participant" required>   
+                        <input type="text" id="participants" name="participants" placeholder="Email du participant" required>
+                        // ajouter le nom et prénom
+                        
                         <button type="submit">Ajouter</button>
                     </form>
                 `;
